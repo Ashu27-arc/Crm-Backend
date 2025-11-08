@@ -1,11 +1,12 @@
 import express from "express";
-import { AddNotification, GetAllNotifications } from "../controller/NotificationController.js"; // 👈 Added .js
+import { AddNotification, GetAllNotifications } from "../controller/NotificationController.js"; 
+import { verifyToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
 
-router.post("/add", AddNotification);
+router.post("/add",verifyToken, AddNotification);
 
-router.get("/all", GetAllNotifications);
+router.get("/all",GetAllNotifications);
 
 export default router;

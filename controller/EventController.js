@@ -1,17 +1,23 @@
 import EventSchema from "../models/EventSchema.js";
+import path from "path";
+import fs from "fs";
 
 export const AddEvent = async (req, res) => {
   try {
-    const io = req.app.get("io"); 
+    const io = req.app.get("io");
 
     const { description, date, city, country, state, time } = req.body;
-    let image = req.body.image;
+    let imageUrl;
 
     if (req.file) {
-      image = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
+      const imageName = Date.now() + "-" + req.file.originalname;
+      const uploadPath = path.join("uploads", imageName);
+
+      fs.writeFileSync(uploadPath, req.file.buffer);
+      imageUrl = `/uploads/${imageName}`;
     }
 
-    if (!description || !date || !image || !city || !country || !state || !time) {
+    if (!description || !date || !imageUrl || !city || !country || !state || !time) {
       return res.status(400).json({
         success: false,
         message: "Missing required fields",
@@ -21,17 +27,14 @@ export const AddEvent = async (req, res) => {
     const newEvent = await EventSchema.create({
       description,
       date,
-      image,
+      image: imageUrl,
       city,
       state,
       country,
       time,
     });
 
-    
-    if (io) {
-      io.emit("event-added", newEvent);
-    }
+    if (io) io.emit("event-added", newEvent);
 
     res.status(201).json({
       success: true,
@@ -39,25 +42,20 @@ export const AddEvent = async (req, res) => {
       data: newEvent,
     });
   } catch (error) {
-    console.error("Error adding event:", error.message);
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
+
 export const GetAllEvents = async (req, res) => {
   try {
-    const events = await EventSchema.find().sort({ date: -1 });
-
+    const events = await EventSchema.find().sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
-      message: events.length > 0 ? "Events fetched successfully" : "No events found",
+      message: events.length ? "Events fetched successfully" : "No events found",
       data: events,
     });
   } catch (error) {
-    console.error("Error fetching events:", error.message);
     res.status(500).json({
       success: false,
       message: error.message,
