@@ -8,7 +8,7 @@ import adminRoutes from "./routes/AdminRoutes.js";
 import notificationRoutes from "./routes/NotificationRoute.js";
 import eventRoutes from "./routes/EventRoutes.js";
 import { verifyToken } from "./middleware/auth.js";
-
+import UsersRoute from "./routes/UsersRoute.js";
 dotenv.config();
 
 const app = express();
@@ -17,21 +17,16 @@ const server = http.createServer(app);
 // Setup Socket.io
 const io = new Server(server, {
   cors: {
-    origin: "*", // Replace with frontend IP when deploying
+    origin: "*", 
     methods: ["GET", "POST"],
   },
 });
 
 app.use(cors());
 app.use(express.json());
-
-// ✅ Serve uploaded images as static files
 app.use("/uploads", express.static("uploads"));
 
-// Connect to MongoDB
 connectDB();
-
-// Attach io instance for broadcasting notifications
 app.set("io", io);
 app.use((req, res, next) => {
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
@@ -44,6 +39,7 @@ app.use((req, res, next) => {
 app.use("/api/admin", adminRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/users",UsersRoute)
 
 io.on("connection", (socket) => {
   console.log("🟢 User connected:", socket.id);
@@ -54,7 +50,7 @@ app.get("/", (req, res) => {
   res.send("✅ CRM Backend with JWT Admin Auth is running...");
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () =>
+const PORT = process.env.PORT || 5000;
+server.listen(PORT,"0.0.0.0", () =>
   console.log(`🚀 Server running on port ${PORT}`)
 );
