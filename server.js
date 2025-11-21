@@ -9,23 +9,22 @@ import notificationRoutes from "./routes/NotificationRoute.js";
 import eventRoutes from "./routes/EventRoutes.js";
 import { verifyToken } from "./middleware/auth.js";
 import UsersRoute from "./routes/UsersRoute.js";
+
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-
-// Setup Socket.io
 const io = new Server(server, {
   cors: {
     origin: "*", 
     methods: ["GET", "POST"],
   },
 });
-
 app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
+// DB connect
 connectDB();
 app.set("io", io);
 app.use((req, res, next) => {
@@ -36,21 +35,20 @@ app.use((req, res, next) => {
   next();
 });
 
+// Routes
 app.use("/api/admin", adminRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/events", eventRoutes);
-app.use("/api/users",UsersRoute)
-
+app.use("/api/users", UsersRoute);
 io.on("connection", (socket) => {
   console.log("🟢 User connected:", socket.id);
   socket.on("disconnect", () => console.log("🔴 User disconnected:", socket.id));
 });
-
 app.get("/", (req, res) => {
   res.send("✅ CRM Backend with JWT Admin Auth is running...");
 });
-
 const PORT = process.env.PORT || 5000;
-server.listen(PORT,"0.0.0.0", () =>
-  console.log(`🚀 Server running on port ${PORT}`)
-);
+
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
