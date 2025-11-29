@@ -13,11 +13,6 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-//   isPublished: {
-//     type: Boolean,
-//     required: true,
-//     default: false
-//   },
   date: {
     type: Date,
     default: Date.now  

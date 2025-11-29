@@ -7,7 +7,7 @@ import connectDB from "./config/db.js";
 import adminRoutes from "./routes/AdminRoutes.js";
 import notificationRoutes from "./routes/NotificationRoute.js";
 import eventRoutes from "./routes/EventRoutes.js";
-import UsersRoute from "./routes/UsersRoute.js";
+import Counseller from "./routes/Counseller.js"
 
 dotenv.config();
 
@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 app.use("/api/admin", adminRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/events", eventRoutes);
-app.use("/api/users", UsersRoute);
+app.use("/api/counseller",Counseller );
 io.on("connection", (socket) => {
   console.log("🟢 User connected:", socket.id);
   socket.on("disconnect", () => console.log("🔴 User disconnected:", socket.id));
