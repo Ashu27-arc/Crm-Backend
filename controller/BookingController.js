@@ -2,7 +2,8 @@ import Booking from "../models/BookingSchema.js";
 
 export const BookCounseller = async (req, res) => {
   try {
-    const { name, email, phoneNumber, BookedCounseller, courses } = req.body;
+    const io = req.app.get("io");
+  const { name, email, phoneNumber, BookedCounseller, courses } = req.body;
 
     if (!name || !email || !phoneNumber || !BookedCounseller || !courses) {
       return res.status(400).json({
@@ -10,7 +11,6 @@ export const BookCounseller = async (req, res) => {
         message: "All fields are required",
       });
     }
-
     const booking = await Booking.create({
       name,
       email,
@@ -18,6 +18,7 @@ export const BookCounseller = async (req, res) => {
       BookedCounseller,
       courses,
     });
+    io.emit("booking-created", booking);
 
     res.status(201).json({
       success: true,
