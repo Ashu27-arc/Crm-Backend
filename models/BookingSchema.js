@@ -11,7 +11,7 @@ type:String,
 required:true
 },
 phoneNumber:{
-    type:Number,
+    type:String,
     required:true
 },
 BookedCounseller:{
@@ -22,6 +22,7 @@ courses:{
     type:String,
     required:true
 }
-})
+},
+{timestamps:true})
 const Booking=mongoose.model('BookingDetail',bookingSchema)
 export default Booking
