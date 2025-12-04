@@ -2,9 +2,9 @@ import Booking from "../models/BookingSchema.js";
 
 export const BookCounseller = async (req, res) => {
   try {
-    const io = req.app.get("io");  // ⭐ Get socket.io instance
+    const io = req.app.get("io");  
 
-    const { name, email, phoneNumber, BookedCounseller, courses,exam } = req.body;
+    const { name, email, phoneNumber, BookedCounseller, courses } = req.body;
 
     if (!name || !email || !phoneNumber || !BookedCounseller || !courses) {
       return res.status(400).json({
@@ -19,7 +19,6 @@ export const BookCounseller = async (req, res) => {
       phoneNumber,
       BookedCounseller,
       courses,
-      exam
     });
     if (io) {
       io.emit("booking-created", booking);
