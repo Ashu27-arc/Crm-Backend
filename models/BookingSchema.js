@@ -21,6 +21,10 @@ required:true
 courses:{
     type:String,
     required:true
+},
+exam:{
+type:String,
+required:true
 }
 },
 {timestamps:true})
