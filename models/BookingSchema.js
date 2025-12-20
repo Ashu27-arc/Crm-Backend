@@ -22,6 +22,10 @@ courses:{
     type:String,
     required:true
 },
+Date:{
+    type:String,
+    required:true
+}
 },
 {timestamps:true})
 const Booking=mongoose.model('BookingDetail',bookingSchema)

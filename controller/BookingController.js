@@ -4,9 +4,9 @@ export const BookCounseller = async (req, res) => {
   try {
     const io = req.app.get("io");  
 
-    const { name, email, phoneNumber, BookedCounseller, courses } = req.body;
+    const { name, email, phoneNumber, BookedCounseller, courses ,Date} = req.body;
 
-    if (!name || !email || !phoneNumber || !BookedCounseller || !courses) {
+    if (!name || !email || !phoneNumber || !BookedCounseller || !courses ||!Date) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -19,6 +19,7 @@ export const BookCounseller = async (req, res) => {
       phoneNumber,
       BookedCounseller,
       courses,
+      Date
     });
     if (io) {
       io.emit("booking-created", booking);
