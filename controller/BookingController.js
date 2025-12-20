@@ -59,3 +59,34 @@ export const GetCounseller = async (req, res) => {
     });
   }
 };
+export const DeleteCounseller = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const deletedCounsellor = await Booking.findOneAndDelete({ email });
+
+    if (!deletedCounsellor) {
+      return res.status(404).json({
+        success: false,
+        message: "Counsellor not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Counsellor deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
