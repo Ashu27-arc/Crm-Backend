@@ -6,7 +6,7 @@ export const AddEvent = async (req, res) => {
   try {
     const io = req.app.get("io");
 
-    const { description, date, city, country, state, time } = req.body;
+    const { description, date, city, country, state, time, price } = req.body;
     let imageUrl;
 
     if (req.file) {
@@ -32,6 +32,7 @@ export const AddEvent = async (req, res) => {
       state,
       country,
       time,
+      price,
     });
 
     if (io) io.emit("event-added", newEvent);
@@ -100,8 +101,10 @@ export const UpdateEvent = async (req, res) => {
     const { id } = req.params;
     const io = req.app.get("io");
 
-    const { description, date, city, country, state, time } = req.body;
-    let updatedFields = { description, date, city, country, state, time };
+    const { description, date, city, country, state, time, price } = req.body;
+
+
+    let updatedFields = { description, date, city, country, state, time, price };
     if (req.file) {
       const imageName = Date.now() + "-" + req.file.originalname;
       const uploadPath = path.join("uploads", imageName);
