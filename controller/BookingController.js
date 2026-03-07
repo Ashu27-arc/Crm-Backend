@@ -2,11 +2,11 @@ import Booking from "../models/BookingSchema.js";
 
 export const BookCounseller = async (req, res) => {
   try {
-    const io = req.app.get("io");  
+    const io = req.app.get("io");
 
-    const { name, email, phoneNumber, BookedCounseller, courses ,Date} = req.body;
+    const { name, email, phoneNumber, BookedCounseller, courses, Date, Image, description, experience } = req.body;
 
-    if (!name || !email || !phoneNumber || !BookedCounseller || !courses ||!Date) {
+    if (!name || !email || !phoneNumber || !BookedCounseller || !courses || !Date || !description || !experience || !Image) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -19,7 +19,10 @@ export const BookCounseller = async (req, res) => {
       phoneNumber,
       BookedCounseller,
       courses,
-      Date
+      Date,
+      Image,
+      description,
+      experience,
     });
     if (io) {
       io.emit("booking-created", booking);
@@ -87,6 +90,40 @@ export const DeleteCounseller = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: error.message,
+    });
+  }
+};
+export const GetCounsellerByEmail = async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    const bookings = await Booking.find({ email }).sort({ createdAt: -1 });
+
+    if (!bookings.length) {
+      return res.status(404).json({
+        success: false,
+        message: "No counsellor booked with this email",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      count: bookings.length,
+      data: bookings,
+    });
+
+  } catch (error) {
+    console.log("Fetch Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
     });
   }
 };
