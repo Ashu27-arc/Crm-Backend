@@ -130,7 +130,7 @@ export const GetCounsellerByEmail = async (req, res) => {
 };
 export const takenAction = async (req, res) => {
   try {
-    const { email, action = "taken" } = req.body;
+    const { email, action = "attended" } = req.body;
 
     if (!email) {
       return res.status(400).json({
@@ -139,10 +139,10 @@ export const takenAction = async (req, res) => {
       });
     }
 
-    if (!["pending", "taken"].includes(action)) {
+    if (!["pending", "attended"].includes(action)) {
       return res.status(400).json({
         success: false,
-        message: "Action must be either 'pending' or 'taken'",
+        message: "Action must be either 'pending' or 'attended'",
       });
     }
 
