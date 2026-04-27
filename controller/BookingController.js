@@ -4,9 +4,9 @@ export const BookCounseller = async (req, res) => {
   try {
     const io = req.app.get("io");
 
-    const { name, email, phoneNumber, BookedCounseller, courses, Date, Image, description, experience } = req.body;
+    const { name, email, phoneNumber, BookedCounseller, courses, Date, Image, description, experience, action } = req.body;
 
-    if (!name || !email || !phoneNumber || !BookedCounseller || !courses || !Date || !description || !experience || !Image) {
+    if (!name || !email || !phoneNumber || !BookedCounseller || !courses || !Date || !description || !experience || !Image || !action) {
       return res.status(400).json({
         success: false,
         message: "All fields are required",
@@ -23,6 +23,7 @@ export const BookCounseller = async (req, res) => {
       Image,
       description,
       experience,
+      action
     });
     if (io) {
       io.emit("booking-created", booking);
@@ -121,6 +122,50 @@ export const GetCounsellerByEmail = async (req, res) => {
 
   } catch (error) {
     console.log("Fetch Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
+  }
+};
+export const takenAction = async (req, res) => {
+  try {
+    const { email, action = "taken" } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+
+    if (!["pending", "taken"].includes(action)) {
+      return res.status(400).json({
+        success: false,
+        message: "Action must be either 'pending' or 'taken'",
+      });
+    }
+
+    const updatedBooking = await Booking.findOneAndUpdate(
+      { email },
+      { action },
+      { new: true, sort: { createdAt: -1 } }
+    );
+
+    if (!updatedBooking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Booking action updated successfully",
+      data: updatedBooking,
+    });
+  } catch (error) {
+    console.log("Taken Action Error:", error);
     res.status(500).json({
       success: false,
       message: "Internal Server Error",

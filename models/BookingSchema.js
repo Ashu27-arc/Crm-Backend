@@ -39,8 +39,14 @@ const bookingSchema = new mongoose.Schema(
             required: true,
         },
 
+        action: {
+            type: String,
+            required: true,
+            default: "pending",
+        },
     },
-    { timestamps: true }
+
+
 );
 const Booking = mongoose.model("BookingDetail", bookingSchema);
 export default Booking;
