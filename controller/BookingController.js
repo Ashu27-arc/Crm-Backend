@@ -130,12 +130,12 @@ export const GetCounsellerByEmail = async (req, res) => {
 };
 export const takenAction = async (req, res) => {
   try {
-    const { email, action = "attended" } = req.body;
+    const { id, action = "attended" } = req.body;
 
-    if (!email) {
+    if (!id) {
       return res.status(400).json({
         success: false,
-        message: "Email is required",
+        message: "Booking ID is required",
       });
     }
 
@@ -146,10 +146,10 @@ export const takenAction = async (req, res) => {
       });
     }
 
-    const updatedBooking = await Booking.findOneAndUpdate(
-      { email },
+    const updatedBooking = await Booking.findByIdAndUpdate(
+      id,
       { action },
-      { new: true, sort: { createdAt: -1 } }
+      { new: true }
     );
 
     if (!updatedBooking) {
